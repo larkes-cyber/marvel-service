@@ -69,7 +69,11 @@ class CharList extends Component {
                 <ul className="char__grid">
                    {output}
                 </ul>
-                <button className="button button__main button__long">
+                <button 
+                className="button button__main button__long"
+                disabled={this.state.newItemLoading}
+                onClick={()=>this.onRequest(this.state.offset)}
+                >
                     <div className="inner" onClick={this.uploadChar}>load more</div>
                 </button>
             </div>
