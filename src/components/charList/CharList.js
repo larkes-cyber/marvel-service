@@ -11,7 +11,8 @@ class CharList extends Component {
         loading:true,
         error:false,
         newItemLoading:false,
-        offset:210
+        offset:210,
+        toRed:null
     }
     componentDidMount(){
         let arrInfo=[]
@@ -21,7 +22,7 @@ class CharList extends Component {
     onRequest=(offset)=>{
         this.onCharListLoading();
         const Data=new GetData();
-        Data.getAllCharacters()
+        Data.getAllCharacters(offset)
         .then(this.onCharListLoaded)
         .catch(()=>{
             this.setState({
@@ -44,8 +45,27 @@ class CharList extends Component {
             newItemLoading:false,
             offset:state.offset+9
         }))
+        console.log(this.state.offset)
     } 
-    uploadChar=()=>{
+    uploadChar=(e,elem)=>{
+        // this.setState(state=>({
+        //     toRed:item
+        // }));
+        e.currentTarget.parentNode.childNodes.forEach(item=>{
+            if(item.dataset.key===this.state.toRed){
+                if(item.classList.contains('lolka')){
+                    item.classList.remove('lolka');
+                }
+            }
+        })
+        e.currentTarget.parentNode.childNodes.forEach(item=>{
+            if(item.dataset.key===elem){
+                item.className+=' lolka';
+                this.setState(state=>({
+                    toRed:elem
+                }));
+            }
+        })
 
     }
     render(){
@@ -55,7 +75,12 @@ class CharList extends Component {
                 elems.push(
                     <li className="char__item"
                         key={item.id}
-                        onClick={()=>this.props.onLoadIdChar(item.id)}
+                        onClick={(e)=>{
+                            this.uploadChar(e,e.currentTarget.dataset.key);
+                            this.props.onLoadIdChar(item.id);
+                        }
+                        }
+                        data-key={item.id}
                     >
                         <img src={item.picture} className={item.picture.substr(item.picture.length-23,23)==='image_not_available.jpg'?'fixPic':null} alt="abyss"/>
                         <div className="char__name">{item.name}</div>
@@ -74,7 +99,7 @@ class CharList extends Component {
                 disabled={this.state.newItemLoading}
                 onClick={()=>this.onRequest(this.state.offset)}
                 >
-                    <div className="inner" onClick={this.uploadChar}>load more</div>
+                    <div className="inner">load more</div>
                 </button>
             </div>
         )
