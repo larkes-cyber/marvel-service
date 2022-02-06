@@ -1,73 +1,63 @@
-import React, { Component } from 'react';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 import GetData from '../../services/getData';
 import Spinner from '../spinner/spinner';
 import Error from '../error/error';
-const Data=new GetData();
-class RandomChar extends Component{
-    state={
-        char:{
-            name:null,
-            text:null,
-            homepage:null,
-            wiki:null,
-            picture:null
-        },
-        loading:true,
-        error:false
-    }
-    Data=new GetData();
-    onLoadState=(char)=>{
+import { useState,useEffect} from 'react';
+const RandomChar = ()=>{
+    const [char,setChar]=useState({
+        name:null,
+        text:null,
+        homepage:null,
+        wiki:null,
+        picture:null
+    })
+    const [loading,setLoading]=useState(true);
+    const [error,setError]=useState(false);
+    const Data=new GetData();
+    const onLoadState=(char)=>{
         const str='image_not_available.jpg';
         const coun=char.picture;
         if(coun.substr(char.picture.length-23,23)===str){
             const elem=document.querySelector('.randomchar__img');
             elem.style.objectFit="contain";
         }
-        console.log(char)
-        this.setState({
-            char:char,
-            loading:false,
-            error:false
-        })
+        setChar(char);
+        setLoading(false);
+        setError(false)
     }
-    componentDidMount(){
-        this.updateChar();
-    }
-    updateChar=()=>{
+    useEffect(()=>{
+        updateChar();
+    },[])
+    const updateChar=()=>{
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        this.Data.getCharacter(id)
-        .then(res=>this.onLoadState(res))
+        Data.getCharacter(id)
+        .then(res=>onLoadState(res))
         .catch(()=>{
-          
-            this.setState({
-                loading:false,
-                error:true
-            })
+            setLoading(false);
+            setError(true)
         }
         )
     }
-    onChangeRandomChar=()=>{
-        this.updateChar();
+    const onChangeRandomChar=()=>{
+        updateChar();
     }
-    render(){
-        const loading=this.state.loading ? <Spinner/> : null;
-        const error=this.state.error ? <Error/> : null;
-        const content= !(this.state.loading || this.state.error) ? 
+    const loadingBlock=loading ? <Spinner/> : null;
+    const errorBlock=error ? <Error/> : null;
+    const content= !(loading || error) ? 
         <View data={
             {
-            name:this.state.char.name,
-            img:this.state.char.picture,
-            text:this.state.char.text,
-            homepage:this.state.char.homepage,
-            wiki:this.state.char.wiki
+            name:char.name,
+            img:char.picture,
+            text:char.text,
+            homepage:char.homepage,
+            wiki:char.wiki
             }
         }/> : null
     return (
         <div className="randomchar">
-           {loading}
-           {error}
+           {loadingBlock}
+           {errorBlock}
            {content}
             <div className="randomchar__static">
                 <p className="randomchar__title">
@@ -77,7 +67,7 @@ class RandomChar extends Component{
                 <p className="randomchar__title">
                     Or choose another one
                 </p>
-                <button onClick={this.onChangeRandomChar} className="button button__main">
+                <button onClick={onChangeRandomChar} className="button button__main">
                     <div className="inner">try it</div>
                 </button>
                 <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
@@ -85,7 +75,7 @@ class RandomChar extends Component{
         </div>
     )
     }
-}
+
 const View=(props)=>{
     const {name,img,text,homepage,wiki}=props.data;
     return(

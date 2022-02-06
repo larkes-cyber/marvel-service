@@ -4,55 +4,42 @@ import GetData from '../../services/getData';
 import React, { Component } from 'react';
 import Spinner from '../spinner/spinner';
 import Error from '../error/error';
-class CharList extends Component {
-    state={
-        array:[],
-        arrayElems:[],
-        loading:true,
-        error:false,
-        newItemLoading:false,
-        offset:210,
-        toRed:null
-    }
-    componentDidMount(){
-        let arrInfo=[]
-        this.onRequest();
-   
-    }
-    onRequest=(offset)=>{
-        this.onCharListLoading();
+import {useState,useEffect} from 'react';
+const CharList = (props)=> {
+    const [array,setArray] = useState([]);
+    const [arrayElems,setArrayElems]=useState([]);
+    const [loading,setLoading]=useState(false);
+    const [error,setError]=useState(false);
+    const [newItemLoading,setNewItemLoading]=useState(false);
+    const [toRed,setToRed]=useState(null);
+    const [offset,setOffset]=useState(250);
+    useEffect(()=>{
+        onRequest();
+    },[])
+    const onRequest=(offset)=>{
+        onCharListLoading();
         const Data=new GetData();
         Data.getAllCharacters(offset)
-        .then(this.onCharListLoaded)
+        .then(onCharListLoaded)
         .catch(()=>{
-            this.setState({
-                error:true
-            })
+            setError(true)
         } 
         )
     }
-    onCharListLoading=()=>{
-        this.setState({
-            newItemLoading:true
-        })
+    const onCharListLoading=()=>{
+        setNewItemLoading(true);
     }
-    onCharListLoaded=(arrayElems)=>{
+    const onCharListLoaded=(arrayElems)=>{
         const arr=arrayElems;
         arr.splice(9,11)
-        this.setState(state=>({
-            arrayElems:[...state.arrayElems, ...arr],
-            loading:false,
-            newItemLoading:false,
-            offset:state.offset+9
-        }))
-        console.log(this.state.offset)
+        setArrayElems(arrayElems=>[...arrayElems, ...arr]);
+        setLoading(false);
+        setNewItemLoading(false);
+        setOffset(offset=>offset+9);
     } 
-    uploadChar=(e,elem)=>{
-        // this.setState(state=>({
-        //     toRed:item
-        // }));
+    const uploadChar=(e,elem)=>{
         e.currentTarget.parentNode.childNodes.forEach(item=>{
-            if(item.dataset.key===this.state.toRed){
+            if(item.dataset.key===toRed){
                 if(item.classList.contains('lolka')){
                     item.classList.remove('lolka');
                 }
@@ -61,23 +48,19 @@ class CharList extends Component {
         e.currentTarget.parentNode.childNodes.forEach(item=>{
             if(item.dataset.key===elem){
                 item.className+=' lolka';
-                this.setState(state=>({
-                    toRed:elem
-                }));
+                setToRed(elem);
             }
         })
 
     }
-    render(){
         const elems=[];
-        console.log(this.state.arrayElems)
-        this.state.arrayElems.forEach((item,i)=>{
+        arrayElems.forEach((item,i)=>{
                 elems.push(
                     <li className="char__item"
                         key={item.id}
                         onClick={(e)=>{
-                            this.uploadChar(e,e.currentTarget.dataset.key);
-                            this.props.onLoadIdChar(item.id);
+                            uploadChar(e,e.currentTarget.dataset.key);
+                            props.onLoadIdChar(item.id);
                         }
                         }
                         data-key={item.id}
@@ -88,7 +71,7 @@ class CharList extends Component {
                 )
         })
 
-        const output=this.state.error?<Error/>:this.state.loading?<Spinner/>:elems;
+        const output=error?<Error/>:loading?<Spinner/>:elems;
         return (
             <div className="char__list">
                 <ul className="char__grid">
@@ -96,15 +79,13 @@ class CharList extends Component {
                 </ul>
                 <button 
                 className="button button__main button__long"
-                disabled={this.state.newItemLoading}
-                onClick={()=>this.onRequest(this.state.offset)}
+                disabled={newItemLoading}
+                onClick={()=>onRequest(offset)}
                 >
                     <div className="inner">load more</div>
                 </button>
             </div>
         )
     }
-
-}
 
 export default CharList;
