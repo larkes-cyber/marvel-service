@@ -1,10 +1,11 @@
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
-import GetData from '../../services/getData';
+import useGetData from '../../services/getData';
 import Spinner from '../spinner/spinner';
 import Error from '../error/error';
 import { useState,useEffect} from 'react';
 const RandomChar = ()=>{
+    const {getCharacter,loading,error}=useGetData();
     const [char,setChar]=useState({
         name:null,
         text:null,
@@ -12,9 +13,6 @@ const RandomChar = ()=>{
         wiki:null,
         picture:null
     })
-    const [loading,setLoading]=useState(true);
-    const [error,setError]=useState(false);
-    const Data=new GetData();
     const onLoadState=(char)=>{
         const str='image_not_available.jpg';
         const coun=char.picture;
@@ -23,21 +21,14 @@ const RandomChar = ()=>{
             elem.style.objectFit="contain";
         }
         setChar(char);
-        setLoading(false);
-        setError(false)
     }
     useEffect(()=>{
         updateChar();
     },[])
     const updateChar=()=>{
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        Data.getCharacter(id)
+        getCharacter(id)
         .then(res=>onLoadState(res))
-        .catch(()=>{
-            setLoading(false);
-            setError(true)
-        }
-        )
     }
     const onChangeRandomChar=()=>{
         updateChar();

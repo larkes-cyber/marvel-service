@@ -1,39 +1,30 @@
 import './charList.scss';
 import abyss from '../../resources/img/abyss.jpg';
-import GetData from '../../services/getData';
+import useGetData from '../../services/getData';
 import React, { Component } from 'react';
 import Spinner from '../spinner/spinner';
 import Error from '../error/error';
 import {useState,useEffect} from 'react';
 const CharList = (props)=> {
+    const {getAllCharacters,error,loading}=useGetData();
     const [array,setArray] = useState([]);
     const [arrayElems,setArrayElems]=useState([]);
-    const [loading,setLoading]=useState(false);
-    const [error,setError]=useState(false);
     const [newItemLoading,setNewItemLoading]=useState(false);
     const [toRed,setToRed]=useState(null);
     const [offset,setOffset]=useState(250);
     useEffect(()=>{
-        onRequest();
+        onRequest(123,true);
+
     },[])
-    const onRequest=(offset)=>{
-        onCharListLoading();
-        const Data=new GetData();
-        Data.getAllCharacters(offset)
+    const onRequest=(offset,init)=>{
+        init?setNewItemLoading(false):setNewItemLoading(true);
+       getAllCharacters(offset)
         .then(onCharListLoaded)
-        .catch(()=>{
-            setError(true)
-        } 
-        )
-    }
-    const onCharListLoading=()=>{
-        setNewItemLoading(true);
     }
     const onCharListLoaded=(arrayElems)=>{
         const arr=arrayElems;
         arr.splice(9,11)
         setArrayElems(arrayElems=>[...arrayElems, ...arr]);
-        setLoading(false);
         setNewItemLoading(false);
         setOffset(offset=>offset+9);
     } 
@@ -71,7 +62,7 @@ const CharList = (props)=> {
                 )
         })
 
-        const output=error?<Error/>:loading?<Spinner/>:elems;
+        const output=error?<Error/>:loading && !newItemLoading?<Spinner/>:elems;
         return (
             <div className="char__list">
                 <ul className="char__grid">

@@ -2,30 +2,25 @@ import './charInfo.scss';
 import thor from '../../resources/img/thor.jpeg';
 import Spinner from '../spinner/spinner';
 import Error from '../error/error';
-import GetData from '../../services/getData';
+import useGetData from '../../services/getData';
 import Skeleton from '../skeleton/Skeleton';
 import {useState,useEffect} from "react";
 const CharInfo = (props)=> {
+    const {getCharacter,loading,error}=useGetData();
     const [array,setArray]=useState(null);
-    const [loading,setLoading]=useState(false);
-    const [error,setError]=useState(false);
     const [skelet,setSkelet]=useState(true);
-
-    console.log(props.idChar)
     useEffect(()=>{
         if(props.idChar===null)return
         onLoadArray();
-        const Data=new GetData();
-        Data.getCharacter(props.idChar).then(onLoadArray);
+        getCharacter(props.idChar).then(onLoadArray);
       
     },[props.idChar]);
 
     const onLoadArray=(arr)=>{
         setArray(arr);
-        setLoading(loading=>!loading);
+        console.log(arr)
         setSkelet(false)
 }
-        
         const Error=error?<Error/>:null;
         const Loading=loading?<Spinner/>:null;
         const Elem=!(loading||loading||skelet)?View(array):null;
@@ -40,6 +35,7 @@ const CharInfo = (props)=> {
         )
     }
  const View=(object)=>{
+    if(object===undefined)return null
     console.log(object.comics)
     const arrComics=[];
     object.comics.forEach(item => {

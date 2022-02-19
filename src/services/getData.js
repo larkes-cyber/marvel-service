@@ -1,30 +1,49 @@
-class GetData{
-    _apiUrl='https://gateway.marvel.com:443/v1/public/'
-    _apiKey='apikey=620de84168d1c894797da5075b563716'
-    _baseOffset=250
-    requests= async (url)=>{
-        const data= await fetch(url);
+import {useHttp} from '../components/hooks/useHttpHook';
+const useGetData= ()=>{
+    const _apiUrl='https://gateway.marvel.com:443/v1/public/'
+    const _apiKey='apikey=620de84168d1c894797da5075b563716'
+    const _baseOffset=250;
+    const _baseOffsetForComics=1;
+    const {loading,error,request,clearError}=useHttp();
+    // const requests= async (url)=>{
+    //     const data= await fetch(url);
        
-        if(!data.ok){
-            throw new Error(`Could not fetch ${url}`);
-        }
-        return await data.json();
+    //     if(!data.ok){
+    //         throw new Error(`Could not fetch ${url}`);
+    //     }
+    //     return await data.json();
+    // }
+    const getAllCharacters=async(offset = _baseOffset)=>{
+       const res= await request(`${_apiUrl}characters?offset=${offset}&${_apiKey}`);
+       return res.data.results.map(_transformate);
     }
-    getAllCharacters=async(offset = this._baseOffset)=>{
-       const res= await this.requests(`${this._apiUrl}characters?offset=${offset}&${this._apiKey}`);
-       return res.data.results.map(this._transformate);
-    }
-    getCharacter= async(id)=>{
-        let res= await this.requests(`${this._apiUrl}characters/${id}?${this._apiKey}`);
-        return this._transformate(res.data.results[0]);
+    const getCharacter= async(id)=>{
+        let res= await request(`${_apiUrl}characters/${id}?${_apiKey}`);
+        return _transformate(res.data.results[0]);
      }
-     getIdCharacters= async()=>{
-        let request=await this.getAllCharacters();
+     const getIdCharacters= async()=>{
+        let request=await getAllCharacters();
         let arrId=[];
         arrId= request.data.results.map(item=>item.id);
         return arrId;
      }
-     _transformate=(data)=>{
+     const getComics=async(offset=_baseOffsetForComics)=>{
+         let Data= await request(`${_apiUrl}comics?offset=${offset}&${_apiKey}`);
+         return await Data.data.results.splice(12,11);
+     }
+     const getSomeComics=async(id)=>{
+        let Data= await request(`${_apiUrl}comics/${id}?${_apiKey}`);
+        Data=await Data.data.results[0];
+        return await({
+            title:Data.title,
+            text:(Data.textObjects[0])?Data.textObjects[0].text:null,
+            numberOfIssue:Data.pageCount,
+            language:(Data.textObjects[0])?Data.textObjects[0].language:null,
+            price:Data.prices[0].price,
+            image:Data.thumbnail.path+'.'+Data.thumbnail.extension
+        })
+    }
+     const _transformate=(data)=>{
          return({
              comics:data.comics.items,
              id:data.id,
@@ -40,6 +59,7 @@ class GetData{
              picture:data.thumbnail.path+'.'+data.thumbnail.extension
          })
      }
+     return {loading,error,getAllCharacters,getCharacter,getIdCharacters,getComics,getSomeComics};
 
 }
-export default GetData;
+export default useGetData;
