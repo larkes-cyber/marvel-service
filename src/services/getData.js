@@ -5,14 +5,6 @@ const useGetData= ()=>{
     const _baseOffset=250;
     const _baseOffsetForComics=1;
     const {loading,error,request,clearError}=useHttp();
-    // const requests= async (url)=>{
-    //     const data= await fetch(url);
-       
-    //     if(!data.ok){
-    //         throw new Error(`Could not fetch ${url}`);
-    //     }
-    //     return await data.json();
-    // }
     const getAllCharacters=async(offset = _baseOffset)=>{
        const res= await request(`${_apiUrl}characters?offset=${offset}&${_apiKey}`);
        return res.data.results.map(_transformate);
@@ -59,7 +51,7 @@ const useGetData= ()=>{
              picture:data.thumbnail.path+'.'+data.thumbnail.extension
          })
      }
-     return {loading,error,getAllCharacters,getCharacter,getIdCharacters,getComics,getSomeComics};
+     return {loading, error, getAllCharacters, getCharacter, getIdCharacters, getComics, getSomeComics, clearError};
 
 }
 export default useGetData;

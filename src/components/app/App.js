@@ -1,13 +1,7 @@
 import AppHeader from "../appHeader/AppHeader";
-import RandomChar from "../randomChar/RandomChar";
-import CharList from "../charList/CharList";
-import CharInfo from "../charInfo/CharInfo";
-import { useState } from "react";
-import decoration from '../../resources/img/vision.png';
-import ErrorBoud from '../errorBouderlend/ErrorBouderlend';
-import ComicsList from "../comicsList/ComicsList";
-import MainPage from "../pages/mainPage";
+import { MainPage, ComicsList, SingleComic, Page404} from "../pages";
 import { BrowserRouter, Route, Routes} from "react-router-dom";
+
 const App = ()=> {
 
     return (
@@ -18,6 +12,8 @@ const App = ()=> {
                 <Routes>
                     <Route path="/" element={<MainPage/>}/>
                     <Route path="/comics" element={<ComicsList/>}/>
+                    <Route path="/comics/:idElem" element={<SingleComic/>}/>
+                    <Route path="*" element={<Page404/>}/>
                 </Routes>
             </main>
         </div>

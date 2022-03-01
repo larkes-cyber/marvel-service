@@ -1,9 +1,11 @@
 import { useState, useCallback } from "react"
-export const useHttp=()=>{
-    const [loading,setLoading]=useState(false);
-    const [error,setError]=useState(null);
-    const request=useCallback(async(url)=>{
+export const useHttp = () => {
+    const [loading,setLoading] = useState(false);
+    const [error,setError] = useState(null);
+    const request = useCallback(async(url) => {
+
         setLoading(true);
+
         try{
             const data = await fetch(url);
             if(!data.ok){
@@ -17,7 +19,10 @@ export const useHttp=()=>{
             setLoading(false);
             throw e;
         }
+
     },[])
-    const clearError=useCallback(()=>setError(null),[]);
-    return {loading,error,request,clearError}
+
+    const clearError = useCallback(() => setError(null),[]);
+
+    return {loading, error, request, clearError}
 }

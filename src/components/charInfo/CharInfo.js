@@ -5,26 +5,29 @@ import Error from '../error/error';
 import useGetData from '../../services/getData';
 import Skeleton from '../skeleton/Skeleton';
 import {useState,useEffect} from "react";
+
 const CharInfo = (props)=> {
-    const {getCharacter,loading,error}=useGetData();
-    const [array,setArray]=useState(null);
-    const [skelet,setSkelet]=useState(true);
-    useEffect(()=>{
-        if(props.idChar===null)return
+
+    const {getCharacter, loading, error}=useGetData();
+    const [array, setArray]=useState(null);
+    const [skelet, setSkelet]=useState(true);
+
+    useEffect(() => {
+        if(props.idChar === null)return
         onLoadArray();
         getCharacter(props.idChar).then(onLoadArray);
       
     },[props.idChar]);
 
-    const onLoadArray=(arr)=>{
+    const onLoadArray = (arr) => {
         setArray(arr);
-        console.log(arr)
         setSkelet(false)
-}
-        const Error=error?<Error/>:null;
-        const Loading=loading?<Spinner/>:null;
-        const Elem=!(loading||loading||skelet)?View(array):null;
-        const Skelet=skelet?<Skeleton/>:null;
+    }
+
+        const Error = error?<Error/>:null;
+        const Loading = loading?<Spinner/>:null;
+        const Elem = !(loading||loading||skelet)?View(array):null;
+        const Skelet = skelet?<Skeleton/>:null;
         return (
             <div className="char__info">
                {Error}
@@ -35,8 +38,7 @@ const CharInfo = (props)=> {
         )
     }
  const View=(object)=>{
-    if(object===undefined)return null
-    console.log(object.comics)
+    if(object === undefined)return null
     const arrComics=[];
     object.comics.forEach(item => {
         arrComics.push(

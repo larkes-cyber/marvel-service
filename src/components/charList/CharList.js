@@ -1,56 +1,60 @@
 import './charList.scss';
-import abyss from '../../resources/img/abyss.jpg';
 import useGetData from '../../services/getData';
-import React, { Component } from 'react';
 import Spinner from '../spinner/spinner';
 import Error from '../error/error';
 import {useState,useEffect} from 'react';
-const CharList = (props)=> {
-    const {getAllCharacters,error,loading}=useGetData();
-    const [array,setArray] = useState([]);
-    const [arrayElems,setArrayElems]=useState([]);
-    const [newItemLoading,setNewItemLoading]=useState(false);
-    const [toRed,setToRed]=useState(null);
-    const [offset,setOffset]=useState(250);
-    useEffect(()=>{
-        onRequest(123,true);
 
+const CharList = (props)=> {
+    const {getAllCharacters, error, loading,  clearError} = useGetData();
+    const [arrayElems, setArrayElems] = useState([]);
+    const [newItemLoading, setNewItemLoading] = useState(false);
+    const [toRed, setToRed] = useState(null);
+    const [offset, setOffset] = useState(130);
+
+    useEffect(() => {
+        onRequest(offset, true);
     },[])
-    const onRequest=(offset,init)=>{
+
+    const onRequest=(offset, init) => {
+        clearError();
         init?setNewItemLoading(false):setNewItemLoading(true);
        getAllCharacters(offset)
         .then(onCharListLoaded)
     }
-    const onCharListLoaded=(arrayElems)=>{
-        const arr=arrayElems;
-        arr.splice(9,11)
-        setArrayElems(arrayElems=>[...arrayElems, ...arr]);
+
+    const onCharListLoaded = (arrayElems) => {
+        const arr = arrayElems;
+        arr.splice(9, 11)
+        setArrayElems(arrayElems => [...arrayElems, ...arr]);
         setNewItemLoading(false);
-        setOffset(offset=>offset+9);
+        setOffset(offset => offset+9);
     } 
-    const uploadChar=(e,elem)=>{
-        e.currentTarget.parentNode.childNodes.forEach(item=>{
-            if(item.dataset.key===toRed){
+    
+    const uploadChar=(e, elem)=>{
+        e.currentTarget.parentNode.childNodes.forEach(item => {
+            if(item.dataset.key === toRed){
                 if(item.classList.contains('lolka')){
                     item.classList.remove('lolka');
                 }
             }
         })
+
         e.currentTarget.parentNode.childNodes.forEach(item=>{
-            if(item.dataset.key===elem){
-                item.className+=' lolka';
+            if(item.dataset.key === elem){
+                item.className += ' lolka';
                 setToRed(elem);
             }
         })
 
     }
-        const elems=[];
-        arrayElems.forEach((item,i)=>{
+
+        const elems = [];
+        arrayElems.forEach((item, i)=>{
                 elems.push(
                     <li className="char__item"
                         key={item.id}
-                        onClick={(e)=>{
-                            uploadChar(e,e.currentTarget.dataset.key);
+                        onClick={(e) => {
+                            uploadChar(e, e.currentTarget.dataset.key);
                             props.onLoadIdChar(item.id);
                         }
                         }
@@ -62,7 +66,7 @@ const CharList = (props)=> {
                 )
         })
 
-        const output=error?<Error/>:loading && !newItemLoading?<Spinner/>:elems;
+        const output = error?<Error/>:loading && !newItemLoading?<Spinner/>:elems;
         return (
             <div className="char__list">
                 <ul className="char__grid">

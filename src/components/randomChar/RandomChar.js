@@ -4,35 +4,49 @@ import useGetData from '../../services/getData';
 import Spinner from '../spinner/spinner';
 import Error from '../error/error';
 import { useState,useEffect} from 'react';
-const RandomChar = ()=>{
-    const {getCharacter,loading,error}=useGetData();
-    const [char,setChar]=useState({
+
+const RandomChar = () => {
+    const {getCharacter, loading, error, clearError}=useGetData();
+    const [char, setChar]=useState({
         name:null,
         text:null,
         homepage:null,
         wiki:null,
         picture:null
     })
-    const onLoadState=(char)=>{
-        const str='image_not_available.jpg';
-        const coun=char.picture;
-        if(coun.substr(char.picture.length-23,23)===str){
-            const elem=document.querySelector('.randomchar__img');
+
+
+    const onLoadState = (char) => {
+        const str = 'image_not_available.jpg';
+        const coun = char.picture;
+
+        if(coun.substr(char.picture.length-23,23) === str){
+            const elem = document.querySelector('.randomchar__img');
             elem.style.objectFit="contain";
         }
         setChar(char);
+
     }
+
+
     useEffect(()=>{
         updateChar();
     },[])
-    const updateChar=()=>{
+
+
+    const updateChar = () => {
+        clearError();
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
         getCharacter(id)
-        .then(res=>onLoadState(res))
+        .then(res => onLoadState(res))
     }
-    const onChangeRandomChar=()=>{
+
+
+    const onChangeRandomChar = () => {
         updateChar();
     }
+
+
     const loadingBlock=loading ? <Spinner/> : null;
     const errorBlock=error ? <Error/> : null;
     const content= !(loading || error) ? 
@@ -45,6 +59,8 @@ const RandomChar = ()=>{
             wiki:char.wiki
             }
         }/> : null
+
+
     return (
         <div className="randomchar">
            {loadingBlock}
