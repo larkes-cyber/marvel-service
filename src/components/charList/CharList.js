@@ -3,6 +3,8 @@ import useGetData from '../../services/getData';
 import Spinner from '../spinner/spinner';
 import Error from '../error/error';
 import {useState,useEffect} from 'react';
+import { Transition } from 'react-transition-group'; 
+import { TransitionGroup } from 'react-transition-group';
 
 const CharList = (props)=> {
     const {getAllCharacters, error, loading,  clearError} = useGetData();
@@ -48,38 +50,81 @@ const CharList = (props)=> {
 
     }
 
+    const renderOfElements = () => {
+
+        const duration = 11300;
+
+        const defaultStyle = {
+        transition: `opacity visibility ${duration}ms ease-in-out`,
+        opacity: 0,
+        visibility:'hidden'
+         }
+
+
+        const transitionStyles = {
+        entering: { opacity: 1, visibility:'visible' },
+        entered:  { opacity: 1, visibility:'visible' },
+        exiting:  { opacity: 0, visibility:'hidden' },
+        exited:  { opacity: 0, visibility:'hidden' },
+         };
+
+
         const elems = [];
+
         arrayElems.forEach((item, i)=>{
                 elems.push(
-                    <li className="char__item"
-                        key={item.id}
-                        onClick={(e) => {
-                            uploadChar(e, e.currentTarget.dataset.key);
-                            props.onLoadIdChar(item.id);
+                    <Transition in={true} timeout={duration}>
+                        {state => ( 
+                            <li className="char__item"
+                                 key={item.id}
+                                 onClick={(e) => {
+                                     uploadChar(e, e.currentTarget.dataset.key);
+                                     props.onLoadIdChar(item.id);
+                                     }
+                                  }
+                                data-key={item.id}
+                                style = {{
+                                    ...defaultStyle,
+                                    ...transitionStyles[state]
+                                }}
+                        
+                            >
+                                <img src={item.picture} className={item.picture.substr(item.picture.length-23,23)==='image_not_available.jpg'?'fixPic':null} alt="abyss"/>
+                                <div className="char__name">{item.name}</div>
+                            </li>
+                          )
                         }
-                        }
-                        data-key={item.id}
-                    >
-                        <img src={item.picture} className={item.picture.substr(item.picture.length-23,23)==='image_not_available.jpg'?'fixPic':null} alt="abyss"/>
-                        <div className="char__name">{item.name}</div>
-                    </li>
-                )
-        })
+                            
+                    </Transition>
+                                
+                    )
+            })
 
-        const output = error?<Error/>:loading && !newItemLoading?<Spinner/>:elems;
+
         return (
-            <div className="char__list">
+            <TransitionGroup component={null}>
                 <ul className="char__grid">
-                   {output}
+                    {elems}
                 </ul>
-                <button 
-                className="button button__main button__long"
-                disabled={newItemLoading}
-                onClick={()=>onRequest(offset)}
-                >
-                    <div className="inner">load more</div>
-                </button>
-            </div>
+            </TransitionGroup>
+               
+          )        
+        }
+
+    const result = renderOfElements();
+
+    const output = error?<Error/>:loading && !newItemLoading?<Spinner/>:result;
+    return (
+        <div className="char__list">
+            {output}
+            <button 
+             className="button button__main button__long"
+             disabled={newItemLoading}
+             onClick={()=>onRequest(offset)}
+            >
+                <div className="inner">load more</div>
+            </button>
+        </div>
         )
     }
 
