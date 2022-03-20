@@ -28,6 +28,7 @@ const CharInfo = (props)=> {
         const Loading = loading?<Spinner/>:null;
         const Elem = !(loading||loading||skelet)?View(array):null;
         const Skelet = skelet?<Skeleton/>:null;
+
         return (
             <div className="char__info">
                {Error}
@@ -37,6 +38,7 @@ const CharInfo = (props)=> {
             </div>
         )
     }
+    
  const View=(object)=>{
     if(object === undefined)return null
     const arrComics=[];
