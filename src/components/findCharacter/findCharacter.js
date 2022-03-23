@@ -1,13 +1,10 @@
 import './findCharacter.css';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
+import useGetData from '../../services/getData';
+import { useState } from "react";
 
-const check = (value) => {
-    
-    alert(value)
 
-    return value === 'ivan'
-}
 
 const Error = () => (
     <ErrorMessage name='name'>
@@ -18,6 +15,22 @@ const Error = () => (
 )
 
 const FindCharacter = () => {
+
+    const {getCharacterByName} = useGetData()
+
+    const [array, setArray]=useState(null);
+
+    const checkChar = (value) => {
+
+        const setCharFromPromis = (data) => {
+            alert(123)
+            setArray(data)
+
+        }
+        const results =  getCharacterByName('dfgdfgdfg').then(setCharFromPromis)
+    
+    }
+
     return (
 
         <div>
@@ -31,14 +44,16 @@ const FindCharacter = () => {
                     })
                 }
 
-                validate = {value => {
-                    check(value.name)
-                    return {request:value!=='Ivan'}
-                }}
-
+       
                 onSubmit = {(values, { setSubmitting })=>{
-                    alert(1)
+
                     setSubmitting(false);
+
+                    checkChar(values.name)
+                   
+               
+                    console.log(array)
+                    
                 }}
             >
                {
@@ -47,11 +62,10 @@ const FindCharacter = () => {
                          <label htmlFor="name" id='labelName'>Or find a character by name:</label>
                          <Field type="text" id='name' name="name" placeholder="Enter name"/>
                         
-                         <button className='button button__main sumbit' type='submit' disabled={isSubmitting} ><div className="inner">Find</div></button>
-                         {
-                             touched.name ? <Error/> : null
-                         }
-                         {errors.request && touched.name ? <h1 className='error'>The character was not found. Check the name and try again</h1> : null}
+                         <button className='button button__main sumbit' type='submit' disabled={isSubmitting}  ><div className="inner">Find</div></button>
+                      
+                             <Error/>
+                         {/* {errors.request && touched.name ? <h1 className='error'>The character was not found. Check the name and try again</h1> : null}   */}
                        </Form>
                    )
                } 
