@@ -2,7 +2,7 @@ import './findCharacter.css';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
 import useGetData from '../../services/getData';
-import { useState } from "react";
+
 
 
 
@@ -29,6 +29,12 @@ const FindCharacter = () => {
 
     } 
 
+    const validationIsSuccessfuly = (data) => {
+
+        
+
+    }
+
     return (
 
         <div>
@@ -48,8 +54,12 @@ const FindCharacter = () => {
                     setSubmitting(true);
 
                     const someNum = await checkChar(values.name)
+
+                     if ( !(await someNum) )  return  false
+
+
                    
-                    return await someNum
+                    
                     
                      
                     
