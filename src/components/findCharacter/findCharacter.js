@@ -18,18 +18,16 @@ const FindCharacter = () => {
 
     const {getCharacterByName} = useGetData()
 
-    const [array, setArray]=useState(null);
 
-    const checkChar = (value) => {
-
-        const setCharFromPromis = (data) => {
-            alert(123)
-            setArray(data)
-
-        }
-        const results =  getCharacterByName('dfgdfgdfg').then(setCharFromPromis)
+    const getChar = async(value) => await getCharacterByName('TENEBROUS').then(res => res)
     
-    }
+    const checkChar = async(val) =>{
+
+        const Data = await getChar(val)
+
+        return await Data.length == 0 ? false : Data
+
+    } 
 
     return (
 
@@ -45,14 +43,15 @@ const FindCharacter = () => {
                 }
 
        
-                onSubmit = {(values, { setSubmitting })=>{
+                onSubmit = {async(values, { setSubmitting })=>{
 
-                    setSubmitting(false);
+                    setSubmitting(true);
 
-                    checkChar(values.name)
+                    const someNum = await checkChar(values.name)
                    
-               
-                    console.log(array)
+                    return await someNum
+                    
+                     
                     
                 }}
             >
