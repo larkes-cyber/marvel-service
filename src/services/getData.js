@@ -5,36 +5,61 @@ const useGetData= ()=>{
     const _baseOffset=250;
     const _baseOffsetForComics=1;
     const {loading,error,request,clearError}=useHttp();
+
     const getAllCharacters=async(offset = _baseOffset)=>{
        const res= await request(`${_apiUrl}characters?offset=${offset}&${_apiKey}`);
        return res.data.results.map(_transformate);
     }
+
+    const getCharacterByName = async(data) => {
+
+        const name = `name=${data}`;
+
+        let res = await request(`${_apiUrl}characters?${name}&${_apiKey}`)
+
+
+        if( res.data.results.length === 0) return false
+          
+        await console.log(res.data.results)
+        return await({
+            name:res.data.results[0].name,
+            text:res.data.results[0].description,
+            picture:res.data.results[0].thumbnail.path+'.'+res.data.results[0].thumbnail.extension
+        })
+
+    }
+
     const getCharacter= async(id)=>{
         let res= await request(`${_apiUrl}characters/${id}?${_apiKey}`);
         return _transformate(res.data.results[0]);
      }
+
      const getIdCharacters= async()=>{
         let request=await getAllCharacters();
         let arrId=[];
         arrId= request.data.results.map(item=>item.id);
         return arrId;
      }
+
      const getComics=async(offset=_baseOffsetForComics)=>{
          let Data= await request(`${_apiUrl}comics?offset=${offset}&${_apiKey}`);
          return await Data.data.results.splice(12,11);
      }
+
      const getSomeComics=async(id)=>{
         let Data= await request(`${_apiUrl}comics/${id}?${_apiKey}`);
         Data=await Data.data.results[0];
         return await({
             title:Data.title,
             text:(Data.textObjects[0])?Data.textObjects[0].text:null,
+            image:Data.thumbnail.path+'.'+Data.thumbnail.extension,
             numberOfIssue:Data.pageCount,
             language:(Data.textObjects[0])?Data.textObjects[0].language:null,
-            price:Data.prices[0].price,
-            image:Data.thumbnail.path+'.'+Data.thumbnail.extension
+            price:Data.prices[0].price
+            
         })
     }
+
      const _transformate=(data)=>{
          return({
              comics:data.comics.items,
@@ -51,7 +76,9 @@ const useGetData= ()=>{
              picture:data.thumbnail.path+'.'+data.thumbnail.extension
          })
      }
-     return {loading, error, getAllCharacters, getCharacter, getIdCharacters, getComics, getSomeComics, clearError};
+
+     return {loading, error, getAllCharacters, getCharacter, getIdCharacters, getComics, getSomeComics, clearError, getCharacterByName};
 
 }
+
 export default useGetData;
