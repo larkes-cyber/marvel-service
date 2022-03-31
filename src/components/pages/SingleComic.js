@@ -21,7 +21,7 @@ const getInformationToRequest = (data) => {
 
         if(item === ":"){
             flag = true
-        }     
+        }     //sdf
     }
 
     return [kindOf,id]
