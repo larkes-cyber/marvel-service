@@ -17,7 +17,15 @@ const useGetData= ()=>{
 
         let res = await request(`${_apiUrl}characters?${name}&${_apiKey}`)
 
-        return res.data.results.map(_transformate);
+
+        if( res.data.results.length === 0) return false
+          
+        await console.log(res.data.results)
+        return await({
+            name:res.data.results[0].name,
+            text:res.data.results[0].description,
+            picture:res.data.results[0].thumbnail.path+'.'+res.data.results[0].thumbnail.extension
+        })
 
     }
 
@@ -44,10 +52,11 @@ const useGetData= ()=>{
         return await({
             title:Data.title,
             text:(Data.textObjects[0])?Data.textObjects[0].text:null,
+            image:Data.thumbnail.path+'.'+Data.thumbnail.extension,
             numberOfIssue:Data.pageCount,
             language:(Data.textObjects[0])?Data.textObjects[0].language:null,
-            price:Data.prices[0].price,
-            image:Data.thumbnail.path+'.'+Data.thumbnail.extension
+            price:Data.prices[0].price
+            
         })
     }
 

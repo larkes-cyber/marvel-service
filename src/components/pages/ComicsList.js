@@ -45,7 +45,7 @@ const View=(props)=>{
     if (props.array===null) return null
     const Elems=props.array.map((item,i)=>{
         return(
-            <Link to={`/comics/${item.id}`}>
+            <Link to={`/comics/comic:${item.id}`}>
                 <li className="comics__item" key={i}>
                     <a href="#">
                         <img src={item.thumbnail.path+'.'+item.thumbnail.extension} alt="ultimate war" className="comics__item-img"/>
