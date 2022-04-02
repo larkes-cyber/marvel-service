@@ -7,7 +7,9 @@ import Spinner from '../spinner/spinner';
 import Error from '../error/error';
 import { Link } from 'react-router-dom';
 import AppBanner from '../appBanner/AppBanner';
-//import SingleComic from './SingleComic';
+import Helmet from 'react-helmet';
+
+
 const ComicsList = () => {
     const [array,setArray]=useState([]);
     const [offset,setOffset]=useState(1);
@@ -29,6 +31,13 @@ const ComicsList = () => {
     const content=loading&&!firstUpload?<Spinner/>:error?<Error/>:<View array={array}/>;
     return (
         <div className="comics__list">
+             <Helmet>
+                <meta
+                    name="description"
+                    content="Marvel list of our comics"
+                />
+                <title>Marvel list of our comics</title>
+            </Helmet>
             {content}
              <button 
                 className="button button__main button__long"

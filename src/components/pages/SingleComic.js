@@ -4,6 +4,7 @@ import { useEffect,useState } from 'react';
 import Spinner from '../spinner/spinner';
 import Error from '../error/error';
 import { useParams, Link } from 'react-router-dom';
+import Helmet from 'react-helmet';
 
 const getInformationToRequest = (data) => {
 
@@ -75,6 +76,13 @@ function View(props){
     if(!props.content)return
     return(
         <div className="single-comic">
+        <Helmet>
+                <meta
+                    name="description"
+                    content="some comic"
+                />
+                <title>{props.content[0]}</title>
+        </Helmet>
         <img src={props.content[2]} alt="x-men" className="single-comic__img"/>
         <div className="single-comic__info">
             <h2 className="single-comic__name">{props.content[0]}</h2>
